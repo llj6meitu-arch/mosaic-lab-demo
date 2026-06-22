@@ -4,7 +4,7 @@
 
 ## 如何打开
 
-直接用浏览器打开 `[index.html](https://llj6meitu-arch.github.io/mosaic-lab-demo/)` 即可体验。
+直接用浏览器打开 https://llj6meitu-arch.github.io/mosaic-lab-demo/ 即可体验。
 
 ## 已实现
 

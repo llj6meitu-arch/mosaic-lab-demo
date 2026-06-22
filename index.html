@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mosaic Lab | 艺术拼图实验室</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar glass">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">▦</div>
+        <div>
+          <h1>Mosaic Lab</h1>
+          <p>艺术拼图实验室</p>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="action-cluster">
+          <label class="toolbar-button" for="imageInput">
+            <span aria-hidden="true">□</span>
+            更换图片
+          </label>
+          <button id="shuffleButton" class="toolbar-button" type="button" disabled>
+            <span aria-hidden="true">↻</span>
+            重新随机
+          </button>
+          <button class="toolbar-button" type="button" disabled>
+            <span aria-hidden="true">⌘</span>
+            设置
+          </button>
+        </div>
+        <button id="exportButton" class="button primary" type="button" disabled>Export PNG</button>
+      </div>
+    </header>
+
+    <aside class="control-panel glass">
+      <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp" />
+
+      <div class="accordion" aria-label="参数设置">
+        <section class="accordion-item active" data-panel="image">
+          <button class="nav-item active" type="button" data-panel-trigger="image">
+            <span aria-hidden="true">⇧</span>
+            图片来源 <small>Image</small>
+          </button>
+          <div class="panel-card accordion-panel">
+            <label class="upload-zone" for="imageInput">
+              <strong>上传一张照片</strong>
+              <span>JPG / PNG / WebP，建议 10MB 以内</span>
+            </label>
+            <p id="fileStatus" class="status-text">还没有上传图片</p>
+          </div>
+        </section>
+
+        <section class="accordion-item" data-panel="mode">
+          <button class="nav-item" type="button" data-panel-trigger="mode">
+            <span aria-hidden="true">✣</span>
+            拼贴模式 <small>Mode</small>
+          </button>
+          <div class="panel-card accordion-panel">
+            <div class="segmented-control" role="radiogroup" aria-label="拼贴模式">
+              <label>
+                <input type="radio" name="mode" value="light" checked />
+                <span>色块拼贴</span>
+              </label>
+              <label>
+                <input type="radio" name="mode" value="remix" />
+                <span>重构拼贴</span>
+              </label>
+            </div>
+            <p class="status-text">色块拼贴会保留纯色留白边框，重构拼贴会大比例重排画面。</p>
+          </div>
+        </section>
+
+        <section class="accordion-item" data-panel="grain">
+          <button class="nav-item" type="button" data-panel-trigger="grain">
+            <span aria-hidden="true">▦</span>
+            拼贴颗粒度 <small>Grain</small>
+          </button>
+          <div class="panel-card accordion-panel">
+            <label class="field">
+              <span>网格密度</span>
+              <select id="gridSelect">
+                <option value="8">8 列</option>
+                <option value="9" selected>9 列</option>
+                <option value="10">10 列</option>
+                <option value="12">12 列</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>网格间距 <strong id="gapValue">3px</strong></span>
+              <input id="gapRange" type="range" min="0" max="8" value="3" />
+            </label>
+            <label class="field">
+              <span>拼贴强度 <strong id="strengthValue">18%</strong></span>
+              <input id="strengthRange" type="range" min="0" max="80" value="18" />
+            </label>
+          </div>
+        </section>
+
+        <section class="accordion-item" data-panel="colors">
+          <button class="nav-item" type="button" data-panel-trigger="colors">
+            <span aria-hidden="true">●</span>
+            色彩方案 <small>Colors</small>
+          </button>
+          <div class="panel-card accordion-panel">
+            <label class="field color-field">
+              <span>背景色</span>
+              <input id="backgroundColor" type="color" value="#f5f5f7" />
+            </label>
+            <label class="field color-field">
+              <span>色块色</span>
+              <input id="blockColor" type="color" value="#0066ff" />
+            </label>
+            <div id="palette" class="palette" aria-label="推荐色板"></div>
+          </div>
+        </section>
+      </div>
+    </aside>
+
+    <main class="workspace">
+      <section class="canvas-section">
+        <div class="canvas-stage">
+          <div class="canvas-card">
+            <canvas id="mosaicCanvas" width="900" height="1200" aria-label="马赛克拼贴画布"></canvas>
+            <div id="tilePopover" class="tile-popover glass hidden" aria-live="polite">
+              <p id="selectedTileText">点击画布中的任意格子进行编辑</p>
+              <div class="tile-action-grid">
+                <button id="colorTileButton" class="button secondary" type="button" disabled>色块</button>
+                <button id="restoreTileButton" class="button secondary" type="button" disabled>重置</button>
+                <button id="randomTileButton" class="button secondary" type="button" disabled>替换</button>
+                <button id="clearSelectionButton" class="button secondary subtle" type="button" disabled>取消</button>
+              </div>
+            </div>
+            <div id="emptyState" class="empty-state">
+              <p>上传一张照片，生成马赛克拼贴</p>
+              <label class="button primary" for="imageInput">上传图片开始</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-card glass" aria-label="画布状态">
+          <div>
+            <span>GRID SIZE</span>
+            <strong id="gridStats">9 x 12</strong>
+          </div>
+          <div>
+            <span>TOTAL TILES</span>
+            <strong id="tileStats">108</strong>
+          </div>
+          <div>
+            <span>RATIO</span>
+            <strong>3 : 4</strong>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer glass">
+      <div>
+        <span class="live-dot" aria-hidden="true"></span>
+        <span>点击一个格子选中，再点击另一个格子交换。按 R 可以重新随机。</span>
+      </div>
+      <nav aria-label="辅助链接">
+        <a href="../马赛克拼贴 Demo 开发说明.md">Documentation</a>
+        <a href="../马赛克拼贴 Demo 页面原型说明.md">Prototype</a>
+        <a href="../Canvas 切格与随机重排实现方案.md">Tech Notes</a>
+      </nav>
+    </footer>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

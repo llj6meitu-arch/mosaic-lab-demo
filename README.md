@@ -4,19 +4,7 @@
 
 ## 如何打开
 
-直接用浏览器打开 `index.html` 即可体验。
-
-如果浏览器对本地文件有限制，也可以在这个目录启动一个静态服务，例如：
-
-```bash
-python3 -m http.server 5173
-```
-
-然后访问：
-
-```text
-http://localhost:5173
-```
+直接用浏览器打开 `[index.html](https://llj6meitu-arch.github.io/mosaic-lab-demo/)` 即可体验。
 
 ## 已实现
 

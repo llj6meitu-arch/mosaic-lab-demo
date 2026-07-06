@@ -33,6 +33,27 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+body::after {
+  position: fixed;
+  z-index: 100;
+  inset: 16px;
+  display: none;
+  place-items: center;
+  border: 2px dashed rgba(0, 102, 255, 0.45);
+  border-radius: 32px;
+  background: rgba(245, 245, 247, 0.78);
+  color: var(--blue);
+  content: "释放图片，开始拼贴";
+  font-size: clamp(24px, 4vw, 44px);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  backdrop-filter: blur(16px);
+}
+
+body.is-dragging-upload::after {
+  display: grid;
+}
+
 button,
 input,
 select {
@@ -386,6 +407,180 @@ h1 {
   color: #fff;
 }
 
+.mode-card-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.mode-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 10px 12px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.58);
+  cursor: pointer;
+}
+
+.mode-card input {
+  position: absolute;
+  opacity: 0;
+}
+
+.mode-card:has(input:checked) {
+  border-color: rgba(0, 102, 255, 0.45);
+  background: rgba(0, 102, 255, 0.1);
+  box-shadow: 0 0 0 1px rgba(0, 102, 255, 0.18);
+}
+
+.mode-card.disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.mode-card strong {
+  font-size: 13px;
+}
+
+.mode-card small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.mode-icon {
+  position: relative;
+  display: grid;
+  width: 56px;
+  height: 56px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #e5e5e7;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.mode-icon::before,
+.mode-icon::after {
+  content: "";
+  position: absolute;
+}
+
+.mode-icon-border::before {
+  inset: 12px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #9cab8a, #f1d6dd);
+}
+
+.mode-icon-border::after {
+  right: 8px;
+  bottom: 8px;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: #c98798;
+}
+
+.mode-icon-remix {
+  background:
+    linear-gradient(90deg, transparent 48%, rgba(255, 255, 255, 0.8) 49% 51%, transparent 52%),
+    linear-gradient(0deg, transparent 48%, rgba(255, 255, 255, 0.8) 49% 51%, transparent 52%),
+    linear-gradient(135deg, #91a77d 0 32%, #d2d2d7 33% 55%, #1d1d1f 56% 70%, #c98798 71%);
+  background-size:
+    18px 18px,
+    18px 18px,
+    100% 100%;
+}
+
+.mode-icon-blank::before {
+  inset: 8px 18px 14px 12px;
+  border-radius: 6px;
+  background: #c9d0bd;
+}
+
+.mode-icon-blank::after {
+  right: 9px;
+  bottom: 10px;
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  background: #d5bd8d;
+}
+
+.mode-icon-colorful {
+  background:
+    radial-gradient(circle at 22% 22%, #ff4d4d 0 10%, transparent 11%),
+    radial-gradient(circle at 78% 28%, #13c6ff 0 10%, transparent 11%),
+    radial-gradient(circle at 28% 76%, #ffb000 0 10%, transparent 11%),
+    radial-gradient(circle at 72% 72%, #27d94f 0 10%, transparent 11%),
+    #ead7de;
+}
+
+.ratio-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.ratio-button {
+  min-height: 36px;
+  border-radius: 13px;
+  background: rgba(0, 0, 0, 0.045);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.ratio-button.active {
+  background: var(--ink);
+  color: #fff;
+}
+
+.filter-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.filter-button {
+  min-height: 38px;
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.045);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+}
+
+.filter-button:hover {
+  transform: translateY(-1px);
+}
+
+.filter-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+  transform: none;
+}
+
+.filter-button.active {
+  background: var(--ink);
+  color: #fff;
+}
+
+.panel-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 14px;
+}
+
 .field {
   display: grid;
   gap: 10px;
@@ -533,6 +728,38 @@ input[type="color"]:disabled {
   gap: 28px;
 }
 
+.tool-switch {
+  display: flex;
+  justify-self: center;
+  gap: 5px;
+  border-radius: 18px;
+  padding: 5px;
+}
+
+.tool-button {
+  min-height: 38px;
+  border-radius: 13px;
+  padding: 0 16px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.tool-button.active {
+  background: var(--blue);
+  color: #fff;
+}
+
+.canvas-workbench {
+  display: grid;
+  width: min(100%, 920px);
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 18px;
+  align-items: center;
+}
+
 .canvas-stage {
   display: grid;
   width: 100%;
@@ -551,11 +778,21 @@ input[type="color"]:disabled {
 
 canvas {
   display: block;
-  width: min(42vw, 520px);
+  width: auto;
   height: auto;
-  max-height: 72vh;
+  max-width: min(42vw, 480px);
+  max-height: 68vh;
   border-radius: 16px;
   cursor: crosshair;
+  touch-action: none;
+}
+
+canvas.is-adjusting-image {
+  cursor: grab;
+}
+
+canvas.is-adjusting-image:active {
+  cursor: grabbing;
 }
 
 .empty-state {
@@ -582,6 +819,49 @@ canvas {
 
 .empty-state.hidden {
   display: none;
+}
+
+.canvas-inspector {
+  display: grid;
+  gap: 16px;
+  align-self: center;
+  border-radius: 26px;
+  padding: 16px;
+}
+
+.canvas-inspector section {
+  display: grid;
+  gap: 12px;
+}
+
+.canvas-inspector h2 {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: -0.02em;
+}
+
+.inspector-stats {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+
+.inspector-stats div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.inspector-stats span {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.inspector-stats strong {
+  font-size: 18px;
+  letter-spacing: -0.04em;
 }
 
 .stats-card {
@@ -692,6 +972,16 @@ canvas {
     min-height: auto;
   }
 
+  .canvas-workbench {
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .canvas-inspector {
+    width: min(100%, 430px);
+    justify-self: center;
+  }
+
   canvas {
     width: min(100%, 430px);
     max-height: none;
@@ -728,6 +1018,8 @@ canvas {
   .control-nav,
   .accordion,
   .segmented-control,
+  .ratio-options,
+  .panel-actions,
   .tile-action-grid {
     grid-template-columns: 1fr;
   }

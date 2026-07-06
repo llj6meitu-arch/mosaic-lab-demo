@@ -59,17 +59,33 @@
             拼贴模式 <small>Mode</small>
           </button>
           <div class="panel-card accordion-panel">
-            <div class="segmented-control" role="radiogroup" aria-label="拼贴模式">
-              <label>
-                <input type="radio" name="mode" value="light" checked />
-                <span>色块拼贴</span>
+            <div class="mode-card-grid" role="radiogroup" aria-label="拼贴模式">
+              <label class="mode-card">
+                <input type="radio" name="mode" value="border" checked />
+                <span class="mode-icon mode-icon-border" aria-hidden="true"></span>
+                <strong>边框拼贴</strong>
+                <small>保留主体，有推荐色边框</small>
               </label>
-              <label>
+              <label class="mode-card">
                 <input type="radio" name="mode" value="remix" />
-                <span>重构拼贴</span>
+                <span class="mode-icon mode-icon-remix" aria-hidden="true"></span>
+                <strong>重构拼贴</strong>
+                <small>大比例重排，抽象重构</small>
+              </label>
+              <label class="mode-card">
+                <input type="radio" name="mode" value="blank" />
+                <span class="mode-icon mode-icon-blank" aria-hidden="true"></span>
+                <strong>留白拼贴</strong>
+                <small>大面积留白，少量露出</small>
+              </label>
+              <label class="mode-card">
+                <input type="radio" name="mode" value="colorful" />
+                <span class="mode-icon mode-icon-colorful" aria-hidden="true"></span>
+                <strong>彩块拼贴</strong>
+                <small>多巴胺彩块，活泼强烈</small>
               </label>
             </div>
-            <p class="status-text">色块拼贴会保留纯色留白边框，重构拼贴会大比例重排画面。</p>
+            <p class="status-text">四种模式已开放：边框、重构、留白和彩块，适合不同分享场景。</p>
           </div>
         </section>
 
@@ -114,6 +130,27 @@
               <input id="blockColor" type="color" value="#0066ff" />
             </label>
             <div id="palette" class="palette" aria-label="推荐色板"></div>
+            <p class="status-text">选中色块后改色只作用于当前格子；未选中时作为新增色块默认色。</p>
+          </div>
+        </section>
+
+        <section class="accordion-item" data-panel="filters">
+          <button class="nav-item" type="button" data-panel-trigger="filters">
+            <span aria-hidden="true">◐</span>
+            滤镜 <small>Filters</small>
+          </button>
+          <div class="panel-card accordion-panel">
+            <div id="filterOptions" class="filter-options" role="radiogroup" aria-label="滤镜效果">
+              <button class="filter-button active" type="button" data-filter-id="none">原图</button>
+              <button class="filter-button" type="button" data-filter-id="grayscale">黑白</button>
+              <button class="filter-button" type="button" data-filter-id="warm">暖调</button>
+              <button class="filter-button" type="button" data-filter-id="cool">冷调</button>
+              <button class="filter-button" type="button" data-filter-id="fade">褪色</button>
+              <button class="filter-button" type="button" data-filter-id="contrast">高对比</button>
+              <button class="filter-button" type="button" data-filter-id="grain">胶片颗粒</button>
+              <button class="filter-button" type="button" data-filter-id="scanline">扫描线</button>
+            </div>
+            <p class="status-text">先选中一个图片格，再给这个格子单独添加滤镜。</p>
           </div>
         </section>
       </div>
@@ -121,38 +158,57 @@
 
     <main class="workspace">
       <section class="canvas-section">
-        <div class="canvas-stage">
-          <div class="canvas-card">
-            <canvas id="mosaicCanvas" width="900" height="1200" aria-label="马赛克拼贴画布"></canvas>
-            <div id="tilePopover" class="tile-popover glass hidden" aria-live="polite">
-              <p id="selectedTileText">点击画布中的任意格子进行编辑</p>
-              <div class="tile-action-grid">
-                <button id="colorTileButton" class="button secondary" type="button" disabled>色块</button>
-                <button id="restoreTileButton" class="button secondary" type="button" disabled>重置</button>
-                <button id="randomTileButton" class="button secondary" type="button" disabled>替换</button>
-                <button id="clearSelectionButton" class="button secondary subtle" type="button" disabled>取消</button>
+        <div class="canvas-workbench">
+          <div class="canvas-stage">
+            <div class="tool-switch glass" aria-label="编辑工具">
+              <button id="imageAdjustTool" class="tool-button active" type="button" disabled>调整图片</button>
+              <button id="tileEditTool" class="tool-button" type="button" disabled>编辑格子</button>
+            </div>
+            <div class="canvas-card">
+              <canvas id="mosaicCanvas" width="900" height="1200" aria-label="马赛克拼贴画布"></canvas>
+              <div id="tilePopover" class="tile-popover glass hidden" aria-live="polite">
+                <p id="selectedTileText">点击画布中的任意格子进行编辑</p>
+                <div class="tile-action-grid">
+                  <button id="colorTileButton" class="button secondary" type="button" disabled>设为色块</button>
+                  <button id="restoreTileButton" class="button secondary" type="button" disabled>重置</button>
+                  <button id="randomTileButton" class="button secondary" type="button" disabled>替换</button>
+                  <button id="clearSelectionButton" class="button secondary subtle" type="button" disabled>取消</button>
+                </div>
+              </div>
+              <div id="emptyState" class="empty-state">
+                <p>上传一张照片，生成马赛克拼贴</p>
+                <label class="button primary" for="imageInput">上传图片开始</label>
               </div>
             </div>
-            <div id="emptyState" class="empty-state">
-              <p>上传一张照片，生成马赛克拼贴</p>
-              <label class="button primary" for="imageInput">上传图片开始</label>
-            </div>
           </div>
-        </div>
 
-        <div class="stats-card glass" aria-label="画布状态">
-          <div>
-            <span>GRID SIZE</span>
-            <strong id="gridStats">9 x 12</strong>
-          </div>
-          <div>
-            <span>TOTAL TILES</span>
-            <strong id="tileStats">108</strong>
-          </div>
-          <div>
-            <span>RATIO</span>
-            <strong>3 : 4</strong>
-          </div>
+          <aside class="canvas-inspector glass" aria-label="画布设置">
+            <section>
+              <h2>画布比例</h2>
+              <div id="ratioOptions" class="ratio-options" aria-label="画布比例"></div>
+            </section>
+            <section>
+              <h2>图片调整</h2>
+              <label class="field">
+                <span>图片缩放 <strong id="zoomValue">100%</strong></span>
+                <input id="zoomRange" type="range" min="100" max="300" value="100" />
+              </label>
+              <div class="panel-actions">
+                <button id="resetImageButton" class="button secondary" type="button" disabled>居中重置</button>
+                <button id="fitImageButton" class="button secondary" type="button" disabled>适配画布</button>
+              </div>
+            </section>
+            <section class="inspector-stats">
+              <div>
+                <span>GRID SIZE</span>
+                <strong id="gridStats">9 x 12</strong>
+              </div>
+              <div>
+                <span>TOTAL TILES</span>
+                <strong id="tileStats">108</strong>
+              </div>
+            </section>
+          </aside>
         </div>
       </section>
     </main>
@@ -160,7 +216,7 @@
     <footer class="footer glass">
       <div>
         <span class="live-dot" aria-hidden="true"></span>
-        <span>点击一个格子选中，再点击另一个格子交换。按 R 可以重新随机。</span>
+        <span id="footerHint">上传图片后先调整构图，再切换到编辑格子。按 R 可以重新随机。</span>
       </div>
       <nav aria-label="辅助链接">
         <a href="../马赛克拼贴 Demo 开发说明.md">Documentation</a>
